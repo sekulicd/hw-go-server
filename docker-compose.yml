@@ -18,8 +18,9 @@ services:
     networks:
       - web
     ports:
-      - 80:80
-      - 443:443
+      - "80:80"
+      - "8080:8080"
+      - "443:443"
     restart: always
 
   hw1:

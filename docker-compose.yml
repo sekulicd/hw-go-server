@@ -1,0 +1,54 @@
+version: '3.7'
+
+services:
+  traefik:
+    image: traefik:v2.4
+    command:
+      - --api.insecure=true
+      - --providers.docker
+      - --providers.docker.exposedbydefault=false
+      - --entrypoints.web.address=:80
+      - --entrypoints.websecure.address=:443
+      - --certificatesresolvers.myresolver.acme.email=dusan.sekulic.mne@gmail.com
+      - --certificatesresolvers.myresolver.acme.storage=/letsencrypt/acme.json
+      - --certificatesresolvers.myresolver.acme.tlschallenge=true
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - ./letsencrypt:/letsencrypt
+    networks:
+      - web
+    ports:
+      - 80:80
+      - 443:443
+    restart: always
+
+  hw1:
+    build: .
+    networks:
+      - web
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.hw1.rule=Host(`hw1.dusansekulic.me`)
+      - traefik.http.routers.hw1.entrypoints=websecure
+      - traefik.http.routers.hw1.tls.certresolver=myresolver
+    restart: always
+    ports:
+      - 8081:8080
+
+  hw2:
+    build: .
+    networks:
+      - web
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.hw2.rule=Host(`hw2.dusansekulic.me`)
+      - traefik.http.routers.hw2.entrypoints=websecure
+      - traefik.http.routers.hw2.tls.certresolver=myresolver
+    restart: always
+    ports:
+      - 8082:8080
+
+networks:
+  web:
+    external: true
+

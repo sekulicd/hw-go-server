@@ -21,6 +21,18 @@ Ensure that you have Docker and Docker Compose installed on your machine. You al
     ```bash
     docker-compose up -d
     ```
+4. Start new service(Optional):
+    ```bash
+    docker run -d \
+      --network=web \
+      --name=hw3 \
+      -p 8083:8080 \
+      --label "traefik.enable=true" \
+      --label 'traefik.http.routers.hw3.rule=Host(`hw3.dusansekulic.me`)' \
+      --label "traefik.http.routers.hw3.entrypoints=websecure" \
+      --label "traefik.http.routers.hw3.tls.certresolver=myresolver" \
+      {WEB_IMAGE}
+    ```
 
 ## Usage
 
